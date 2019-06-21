@@ -1,0 +1,72 @@
+#!/bin/bash
+
+
+## Init
+# Default capname of formatting type to call ft with.
+TYPE='sgr0'
+
+# Default capname to clear formatting type.
+CLEARTYPE='sgr0'
+
+
+## Routines
+# This script is a wrapper around this simple routine which 
+# uses tput to set and unset the appropriate terminal settings.
+ft() { 
+  # Set formatting with tput and print arguments.
+  # Usage: ft TYPE INPUT...
+
+  tput "$1"
+  printf "${@:2}"
+  tput "$CLEARTYPE"
+}
+
+
+function _help() {
+  cat << End
+
+Usage:
+  ft [OPTION] INPUT...
+
+Format text for shell output.
+
+  -b  $( ft bold 'B' )old
+  -B  $( ft bold 'B' )link
+  -h  View $( ft bold 'h' )elp
+  -i  $( ft bold 'I' )nvisible
+  -r  $( ft bold 'R' )everse
+  -s  $( ft bold 'S' )tandout mode
+  -u  $( ft bold 'U' )nderline
+
+End
+
+  exit 1
+}
+
+## Process arguments.
+# Loop through options.
+while getopts ":bBhirsu" opt; do
+  case $opt in
+    b) TYPE='bold' ;; # Bold
+    B) TYPE='blink' ;; # Blink
+    h) _help ;;
+    i) TYPE='invis' ;; # Invisible
+    r) TYPE='rev' ;; # Reverse
+    s) TYPE='smso' && CLEARTYPE='rmso' ;; # Standout
+    u) TYPE='smul' && CLEARTYPE='rmul' ;; # Underline
+    *)
+      echo "Invalid option -$OPTARG" >&2
+      exit 1
+    ;;
+  esac
+done
+
+# Reindex remaining parameters.
+shift $( expr $OPTIND - 1 )
+
+# Exit if less than one parameter is provided.
+[ "$#" -lt 1 ] && _help
+
+
+# Format provided text.
+ft "$TYPE" "$@"

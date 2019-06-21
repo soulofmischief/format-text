@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ## Init
 # Default capname of formatting type to call ft with.
 TYPE='sgr0'
@@ -26,7 +25,7 @@ function _help() {
   cat << End
 
 Usage:
-  ft [OPTION] INPUT...
+  ft [OPTION] INPUT
 
 Format text for shell output.
 
